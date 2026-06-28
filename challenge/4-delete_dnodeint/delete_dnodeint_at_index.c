@@ -11,42 +11,40 @@
  */
 int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 {
-    dlistint_t *current;
-    unsigned int i;
+    dlistint_t *saved_head;
+    unsigned int p;
 
-    if (head == NULL || *head == NULL)
-        return (-1);
-
-    current = *head;
-
-    /* Silinəcək elementin indeksinə qədər gedirik */
-    for (i = 0; current != NULL && i < index; i++)
+    if (*head == NULL)
     {
-        current = current->next;
+        return (-1);
     }
-
-    /* Əgər verilən indeks siyahının ölçüsündən böyükdürsə */
-    if (current == NULL)
-        return (-1);
-
-    /* Əgər silinəcək element ilk elementdirsə (head) */
-    if (current == *head)
+    saved_head = *head;
+    p = 0;
+    while (p < index && saved_head != NULL)
     {
-        *head = current->next;
+        saved_head = saved_head->next;
+        p++;
+    }
+    if (p != index || saved_head == NULL)
+    {
+        return (-1);
+    }
+    if (saved_head == *head)
+    {
+        *head = saved_head->next;
         if (*head != NULL)
+        {
             (*head)->prev = NULL;
+        }
     }
     else
     {
-        /* Əvvəlki elementin next pointerini yeniləyirik */
-        if (current->prev != NULL)
-            current->prev->next = current->next;
-        
-        /* Növbəti elementin prev pointerini yeniləyirik */
-        if (current->next != NULL)
-            current->next->prev = current->prev;
+        saved_head->prev->next = saved_head->next;
+        if (saved_head->next != NULL)
+        {
+            saved_head->next->prev = saved_head->prev;
+        }
     }
-
-    free(current);
+    free(saved_head);
     return (1);
 }
